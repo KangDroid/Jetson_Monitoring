@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
@@ -9,45 +10,68 @@
 
 #define DIVIDER_FACTOR 1000000.0
 
-int main(void) {
-    int fd_cpu0 = open("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq", O_RDONLY, 0644);
-    int fd_cpu1 = open("/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq", O_RDONLY, 0644);
-    int fd_cpu2 = open("/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq", O_RDONLY, 0644);
-    int fd_cpu3 = open("/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq", O_RDONLY, 0644);
+using namespace std;
 
-    if (fd_cpu0 == -1 || fd_cpu1 == -1 || fd_cpu2 == -1 || fd_cpu3 == -1) {
-        std::cout << "File Open Failed" << std::endl;
-        return -1;
-    } else {
-        std::cout << "File Open Succeed!" << std::endl;
+class CPUFrequencyInformation {
+private:
+    int cpu_count;
+    int* cpu_freq_fd;
+    double* cpu_freq_val;
+
+    void registerCPUFreq() {
+        for (int i = 0; i < cpu_count; i++) {
+            string tmp = "/sys/devices/system/cpu/cpu" + to_string(i) +"/cpufreq/cpuinfo_cur_freq";
+            cpu_freq_fd[i] = open(tmp.c_str(), O_RDONLY, 0644);
+            if (cpu_freq_fd[i] < 0) {
+                cout << "CPU Frequency FD Verification Failed" << endl;
+                cout << "Debugging Info: " << endl;
+                cout << "Failed FD --> " << i << endl;
+                cout << "Failed FD Value --> " << cpu_freq_fd[i] << endl; 
+            }
+        }
     }
 
-    char output_0[20] = {0,};
-    char output_1[20] = {0,};
-    char output_2[20] = {0,};
-    char output_3[20] = {0,};
+    double getEachCPUFreq(int& fd) {
+        char output[20] = {0,};
+        read(fd, output, 19);
+        int tmp = atoi(output);
+        return (tmp / DIVIDER_FACTOR);
+    }
+public:
+    CPUFrequencyInformation() {
+        this->cpu_count = 4;
+        cpu_freq_fd = new int[cpu_count];
+        cpu_freq_val = new double[cpu_count];
+        registerCPUFreq();
+    }
+    ~CPUFrequencyInformation() {
+        for (int i = 0; i < cpu_count; i++) {
+            close(cpu_freq_fd[i]);
+        }
+        delete[] cpu_freq_fd;
+        delete[] cpu_freq_val;
+    }
+    double* getCPUFreqArray(int& counter) {
+        counter = this->cpu_count;
+        for (int i = 0; i < cpu_count; i++) {
+            cpu_freq_val[i] = getEachCPUFreq(cpu_freq_fd[i]);
+        }
+        return cpu_freq_val;
+    }
+};
 
-    read(fd_cpu0, output_0, 19);
-    int freq_cpu0 = atoi(output_0);
-    std::cout << "CPU 1: " << (freq_cpu0/DIVIDER_FACTOR) << std::endl;
+/*class CPUOnlineInformation {
+private:
+};*/
 
-    //memset (output, 0x00, 20);
-    read(fd_cpu1, output_1, 19);
-    int freq_cpu1 = atoi(output_1);
-    std::cout << "CPU 2: " << freq_cpu1/DIVIDER_FACTOR << std::endl;
+int main(void) {
+    CPUFrequencyInformation cpf;
+    int counter;
+    double* tmp = cpf.getCPUFreqArray(counter);
 
-    //memset (output, 0x00, 20);
-    read(fd_cpu2, output_2, 19);
-    int freq_cpu2 = atoi(output_2);
-    std::cout << "CPU 3: " << freq_cpu2/DIVIDER_FACTOR << std::endl;
-
-    //memset (output, 0x00, 20);
-    read(fd_cpu3, output_3, 19);
-    int freq_cpu3 = atoi(output_3);
-    std::cout << "CPU 3: " << freq_cpu3/DIVIDER_FACTOR << std::endl;
-
-    close(fd_cpu0);
-    close(fd_cpu1);
-    close(fd_cpu2);
-    close(fd_cpu3);
+    cout << "----------------" << endl;
+    for (int i = 0; i < counter; i++) {
+        cout << "CPU " << i + 1 << ": " << tmp[i] << "Ghz" << endl;
+    }
+    cout << "----------------" << endl;
 }
