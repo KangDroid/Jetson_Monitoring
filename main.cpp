@@ -10,8 +10,11 @@
 #include <fcntl.h>
 
 #define DIVIDER_FACTOR 1000000.0
+#define THERM_DIVIDER_FACTOR 1000.0
 
 using namespace std;
+
+/* TODO: Inheritance */
 
 class DeviceInformation {
 private:
@@ -86,7 +89,9 @@ int main(void) {
 
     DeviceInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
     DeviceInformation cpoi(cpu_device, "/online");
-    DeviceInformation thermal_dev(thermal_device, "/type", 6);
+
+    DeviceInformation thermal_dev_desc(thermal_device, "/type", 6);
+    DeviceInformation thermal_dev(thermal_device, "/temp", 6);
     int counter;
 
     // Online Info
@@ -107,10 +112,11 @@ int main(void) {
 
     // Thermal Information:
     string thermal_information[6];
-    thermal_dev.getThermalDescriptor(thermal_information, counter);
+    int* tmp_three = thermal_dev.getDevDataArray(counter);
+    thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
     cout << "----------------" << endl;
     for (int i = 0; i < counter; i++) {
-        cout << thermal_information[i] << endl;
+        cout << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
     }
     cout << "----------------" << endl;
 }
