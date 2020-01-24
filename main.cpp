@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
+#include <algorithm>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -40,11 +41,17 @@ private:
         int tmp = atoi(output);
         return tmp;
     }
+    string getThermalDescriptor(int& fd) {
+        char output[40] = {0,};
+        read(fd, output, 39);
+        string t(output);
+        return t;
+    }
 public:
-    DeviceInformation(string& base_data_dev, const string& additional_data) {
+    DeviceInformation(string& base_data_dev, const string& additional_data, int dev_count = 4) {
         this->base_data = base_data_dev;
         this->final_data = additional_data;
-        this->device_count = 4;
+        this->device_count = dev_count;
         device_info_fd = new int[device_count];
         device_returned_val = new int[device_count];
         registerDev();
@@ -64,12 +71,22 @@ public:
         }
         return device_returned_val;
     }
+    void getThermalDescriptor(string* descriptor_store, int& counter) {
+        counter = this->device_count;
+        for (int i = 0; i < device_count; i++) {
+            descriptor_store[i] = getThermalDescriptor(device_info_fd[i]);
+            descriptor_store[i].erase(std::remove(descriptor_store[i].begin(), descriptor_store[i].end(), '\n'), descriptor_store[i].end());
+        }
+    }
 };
 
 int main(void) {
     string cpu_device = "/sys/devices/system/cpu/cpu";
+    string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
+
     DeviceInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
     DeviceInformation cpoi(cpu_device, "/online");
+    DeviceInformation thermal_dev(thermal_device, "/type", 6);
     int counter;
 
     // Online Info
@@ -85,6 +102,15 @@ int main(void) {
     cout << "----------------" << endl;
     for (int i = 0; i < counter; i++) {
         cout << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
+    }
+    cout << "----------------" << endl;
+
+    // Thermal Information:
+    string thermal_information[6];
+    thermal_dev.getThermalDescriptor(thermal_information, counter);
+    cout << "----------------" << endl;
+    for (int i = 0; i < counter; i++) {
+        cout << thermal_information[i] << endl;
     }
     cout << "----------------" << endl;
 }
