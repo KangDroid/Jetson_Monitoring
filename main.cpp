@@ -70,19 +70,20 @@ int main(void) {
     CPUInformation cpf("/cpufreq/cpuinfo_cur_freq");
     CPUInformation cpoi("/online");
     int counter;
-    int* tmp = cpf.getCPUDataArray(counter);
-
-    cout << "----------------" << endl;
-    for (int i = 0; i < counter; i++) {
-        cout << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
-    }
-    cout << "----------------" << endl;
 
     // Online Info
     int* tmp_two = cpoi.getCPUDataArray(counter);
     cout << "----------------" << endl;
     for (int i = 0; i < counter; i++) {
         cout << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
+    }
+    cout << "----------------" << endl;
+
+    int* tmp = cpf.getCPUDataArray(counter);
+
+    cout << "----------------" << endl;
+    for (int i = 0; i < counter; i++) {
+        cout << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
     }
     cout << "----------------" << endl;
 }
