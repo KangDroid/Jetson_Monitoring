@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
+#include <vector>
 #include <unistd.h>
 #include <algorithm>
 #include <sys/types.h>
@@ -21,13 +22,12 @@ private:
     string base_data;
     string final_data;
     int device_count;
-    int* device_info_fd;
-    int* device_returned_val;
+    vector<int> device_info_fd;
+    vector<int> device_returned_val;
     void registerDev() {
         for (int i = 0; i < device_count; i++) {
             // TODO: string changed based on mode;
             string tmp = base_data + to_string(i) + final_data;
-
             device_info_fd[i] = open(tmp.c_str(), O_RDONLY, 0644);
             if (device_info_fd[i] < 0) {
                 // Log based on mode;
@@ -60,23 +60,20 @@ public:
         this->base_data = base_data_dev;
         this->final_data = additional_data;
         this->device_count = dev_count;
-        device_info_fd = new int[device_count];
-        device_returned_val = new int[device_count];
-        //registerDev();
+        this->device_info_fd.reserve(device_count);
     }
     ~DeviceInformation() {
         for (int i = 0; i < device_count; i++) {
             close(device_info_fd[i]);
         }
-        delete[] device_info_fd;
-        delete[] device_returned_val;
     }
 
-    int* getDevDataArray(int& counter) {
+    vector<int>& getDevDataArray(int& counter) {
         counter = this->device_count;
+        device_returned_val.clear();
         registerDev();
         for (int i = 0; i < device_count; i++) {
-            device_returned_val[i] = getEachDevData(device_info_fd[i]);
+            device_returned_val.push_back(getEachDevData(device_info_fd[i]));
         }
         closeFree();
         return device_returned_val;
@@ -132,14 +129,14 @@ int main(int argc, char* argv[]) {
 
     while (continous_show == true) {
         // Online Info
-        int* tmp_two = cpoi.getDevDataArray(counter);
+        vector<int> tmp_two = cpoi.getDevDataArray(counter);
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
             cout << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
         }
         cout << "----------------" << endl;
 
-        int* tmp = cpf.getDevDataArray(counter);
+        vector<int> tmp = cpf.getDevDataArray(counter);
 
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
@@ -149,7 +146,7 @@ int main(int argc, char* argv[]) {
 
         // Thermal Information:
         string thermal_information[6];
-        int* tmp_three = thermal_dev.getDevDataArray(counter);
+        vector<int> tmp_three = thermal_dev.getDevDataArray(counter);
         thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
