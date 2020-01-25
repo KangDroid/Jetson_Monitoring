@@ -38,6 +38,11 @@ private:
             }
         }
     }
+    void closeFree() {
+        for (int i = 0; i < device_count; i++) {
+            close(device_info_fd[i]);
+        }
+    }
     int getEachDevData(int& fd) {
         char output[20] = {0,};
         read(fd, output, 19);
@@ -57,7 +62,7 @@ public:
         this->device_count = dev_count;
         device_info_fd = new int[device_count];
         device_returned_val = new int[device_count];
-        registerDev();
+        //registerDev();
     }
     ~DeviceInformation() {
         for (int i = 0; i < device_count; i++) {
@@ -69,21 +74,52 @@ public:
 
     int* getDevDataArray(int& counter) {
         counter = this->device_count;
+        registerDev();
         for (int i = 0; i < device_count; i++) {
             device_returned_val[i] = getEachDevData(device_info_fd[i]);
         }
+        closeFree();
         return device_returned_val;
     }
     void getThermalDescriptor(string* descriptor_store, int& counter) {
         counter = this->device_count;
+        registerDev();
         for (int i = 0; i < device_count; i++) {
             descriptor_store[i] = getThermalDescriptor(device_info_fd[i]);
             descriptor_store[i].erase(std::remove(descriptor_store[i].begin(), descriptor_store[i].end(), '\n'), descriptor_store[i].end());
         }
+        closeFree();
     }
 };
 
-int main(void) {
+int main(int argc, char* argv[]) {
+    // Parse arguments
+    /**
+     * -c : Continously show information(Default interval: 2 seconds)
+     * -n : Set show interval
+     */
+    string* arguments_list = new string[argc];
+    int show_interval = 2;
+    bool continous_show = false;
+
+    // Skip argv[0] because it contains the filename itself.
+    for (int i = 1; i < argc; i++) {
+        arguments_list[i] = string(argv[i]);
+
+        if (arguments_list[i] == "-c") {
+            continous_show = true;
+        }
+
+        if (arguments_list[i] == "-n") {
+            i++;
+            arguments_list[i] = string(argv[i]);
+            show_interval = atoi(arguments_list[i].c_str());
+        }
+    }
+
+    cout << "Continous Show: " << continous_show << endl;
+    cout << "Interval: " << show_interval << endl;
+
     string cpu_device = "/sys/devices/system/cpu/cpu";
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
 
@@ -94,29 +130,34 @@ int main(void) {
     DeviceInformation thermal_dev(thermal_device, "/temp", 6);
     int counter;
 
-    // Online Info
-    int* tmp_two = cpoi.getDevDataArray(counter);
-    cout << "----------------" << endl;
-    for (int i = 0; i < counter; i++) {
-        cout << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
-    }
-    cout << "----------------" << endl;
+    while (continous_show == true) {
+        // Online Info
+        int* tmp_two = cpoi.getDevDataArray(counter);
+        cout << "----------------" << endl;
+        for (int i = 0; i < counter; i++) {
+            cout << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
+        }
+        cout << "----------------" << endl;
 
-    int* tmp = cpf.getDevDataArray(counter);
+        int* tmp = cpf.getDevDataArray(counter);
 
-    cout << "----------------" << endl;
-    for (int i = 0; i < counter; i++) {
-        cout << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
-    }
-    cout << "----------------" << endl;
+        cout << "----------------" << endl;
+        for (int i = 0; i < counter; i++) {
+            cout << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
+        }
+        cout << "----------------" << endl;
 
-    // Thermal Information:
-    string thermal_information[6];
-    int* tmp_three = thermal_dev.getDevDataArray(counter);
-    thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
-    cout << "----------------" << endl;
-    for (int i = 0; i < counter; i++) {
-        cout << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
+        // Thermal Information:
+        string thermal_information[6];
+        int* tmp_three = thermal_dev.getDevDataArray(counter);
+        thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
+        cout << "----------------" << endl;
+        for (int i = 0; i < counter; i++) {
+            cout << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
+        }
+        cout << "----------------" << endl;
+        sleep(show_interval);
     }
-    cout << "----------------" << endl;
+
+    delete[] arguments_list;
 }
