@@ -129,6 +129,7 @@ int main(int argc, char* argv[]) {
 
     while (continous_show == true) {
         // Online Info
+        system("clear && printf '\e[3J'");
         vector<int> tmp_two = cpoi.getDevDataArray(counter);
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
