@@ -10,8 +10,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define DIVIDER_FACTOR 1000000.0
-#define THERM_DIVIDER_FACTOR 1000.0
+// User-Defined Configuration.h
+#include "Configuration.h"
 
 using namespace std;
 
@@ -118,13 +118,18 @@ int main(int argc, char* argv[]) {
     cout << "Interval: " << show_interval << endl;
 
     string cpu_device = "/sys/devices/system/cpu/cpu";
+
+#ifndef IS_RASPI
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
+#endif
 
     DeviceInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
     DeviceInformation cpoi(cpu_device, "/online");
 
+#ifndef IS_RASPI
     DeviceInformation thermal_dev_desc(thermal_device, "/type", 6);
     DeviceInformation thermal_dev(thermal_device, "/temp", 6);
+#endif
     int counter;
 
     while (continous_show == true) {
@@ -145,6 +150,7 @@ int main(int argc, char* argv[]) {
         }
         cout << "----------------" << endl;
 
+#ifndef IS_RASPI
         // Thermal Information:
         string thermal_information[6];
         vector<int> tmp_three = thermal_dev.getDevDataArray(counter);
@@ -154,6 +160,7 @@ int main(int argc, char* argv[]) {
             cout << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
         cout << "----------------" << endl;
+#endif
         sleep(show_interval);
     }
 
