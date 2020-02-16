@@ -1,7 +1,8 @@
 CXX=g++
-CXXFLAGS= -Wall -O3 -I ../
+CXXFLAGS= -Wall -O3 -I ../ -I ../include
 TARGET=app.out
-OBJS=main.o
+OBJS=DeviceInformation.o\
+	main.o
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) -c $< -o $@
