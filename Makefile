@@ -1,3 +1,7 @@
+all: main.o #Default to RPI
+	g++ -o monitor main.o
+	rm -rf *.o
+	
 use_jetson:
 	cp config/jetson_nano/Configuration.h Configuration.h
 
