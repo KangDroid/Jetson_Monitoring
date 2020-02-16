@@ -21,13 +21,6 @@ void DeviceInformation::closeFree() {
     }
 }
 
-int DeviceInformation::getEachDevData(int& fd) {
-    char output[20] = {0,};
-    read(fd, output, 19);
-    int tmp = atoi(output);
-    return tmp;
-}
-
 string DeviceInformation::getThermalDescriptor(int& fd) {
     char output[40] = {0,};
     read(fd, output, 39);
@@ -47,16 +40,6 @@ DeviceInformation::~DeviceInformation() {
     }
 }
 
-vector<int>& DeviceInformation::getDevDataArray(int& counter) {
-    counter = this->device_count;
-    device_returned_val.clear();
-    registerDev();
-    for (int i = 0; i < device_count; i++) {
-        device_returned_val.push_back(getEachDevData(device_info_fd[i]));
-    }
-    closeFree();
-    return device_returned_val;
-}
 void DeviceInformation::getThermalDescriptor(string* descriptor_store, int& counter) {
     counter = this->device_count;
     registerDev();

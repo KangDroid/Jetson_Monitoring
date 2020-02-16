@@ -15,7 +15,7 @@
 using namespace std;
 
 class DeviceInformation {
-private:
+protected:
     string base_data;
     string final_data;
     int device_count;
@@ -23,12 +23,10 @@ private:
     vector<int> device_returned_val;
     void registerDev();
     void closeFree();
-    int getEachDevData(int& fd);
     string getThermalDescriptor(int& fd);
 public:
     DeviceInformation(string& base_data_dev, const string& additional_data, int dev_count = 4);
     ~DeviceInformation();
 
-    vector<int>& getDevDataArray(int& counter);
     void getThermalDescriptor(string* descriptor_store, int& counter);
 };

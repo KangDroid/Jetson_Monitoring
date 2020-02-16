@@ -11,7 +11,7 @@
 #include <fcntl.h>
 
 // Core
-#include "DeviceInformation.h"
+#include "CPUFrequencyInformation.h"
 
 // User-Defined Configuration.h
 #include "Configuration.h"
@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
 #endif
 
-    DeviceInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
-    DeviceInformation cpoi(cpu_device, "/online");
+    CPUFrequencyInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
+    CPUFrequencyInformation cpoi(cpu_device, "/online");
 
 #ifndef IS_RASPI
     DeviceInformation thermal_dev_desc(thermal_device, "/type", 6);
@@ -64,14 +64,14 @@ int main(int argc, char* argv[]) {
     while (continous_show == true) {
         // Online Info
         system("clear && printf '\e[3J'");
-        vector<int> tmp_two = cpoi.getDevDataArray(counter);
+        vector<int> tmp_two = cpoi.getCPUFrequencyArray(counter);
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
             cout << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
         }
         cout << "----------------" << endl;
 
-        vector<int> tmp = cpf.getDevDataArray(counter);
+        vector<int> tmp = cpf.getCPUFrequencyArray(counter);
 
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {

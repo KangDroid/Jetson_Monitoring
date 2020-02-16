@@ -1,7 +1,8 @@
 CXX=g++
 CXXFLAGS= -Wall -O3 -I ../ -I ../include
 TARGET=app.out
-OBJS=DeviceInformation.o\
+OBJS=CPUFrequencyInformation.o\
+	DeviceInformation.o\
 	main.o
 
 %.o: %.c
