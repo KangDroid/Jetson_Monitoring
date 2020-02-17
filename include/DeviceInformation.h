@@ -1,4 +1,5 @@
 /* TODO: Inheritance */
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -23,10 +24,7 @@ protected:
     vector<int> device_returned_val;
     void registerDev();
     void closeFree();
-    string getThermalDescriptor(int& fd);
 public:
     DeviceInformation(string& base_data_dev, const string& additional_data, int dev_count = 4);
     ~DeviceInformation();
-
-    void getThermalDescriptor(string* descriptor_store, int& counter);
 };

@@ -21,13 +21,6 @@ void DeviceInformation::closeFree() {
     }
 }
 
-string DeviceInformation::getThermalDescriptor(int& fd) {
-    char output[40] = {0,};
-    read(fd, output, 39);
-    string t(output);
-    return t;
-}
-
 DeviceInformation::DeviceInformation(string& base_data_dev, const string& additional_data, int dev_count) {
     this->base_data = base_data_dev;
     this->final_data = additional_data;
@@ -38,14 +31,4 @@ DeviceInformation::~DeviceInformation() {
     for (int i = 0; i < device_count; i++) {
         close(device_info_fd[i]);
     }
-}
-
-void DeviceInformation::getThermalDescriptor(string* descriptor_store, int& counter) {
-    counter = this->device_count;
-    registerDev();
-    for (int i = 0; i < device_count; i++) {
-        descriptor_store[i] = getThermalDescriptor(device_info_fd[i]);
-        descriptor_store[i].erase(std::remove(descriptor_store[i].begin(), descriptor_store[i].end(), '\n'), descriptor_store[i].end());
-    }
-    closeFree();
 }

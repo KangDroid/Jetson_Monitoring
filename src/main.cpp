@@ -12,6 +12,7 @@
 
 // Core
 #include "CPUFrequencyInformation.h"
+#include "CPUThermalInformation.h"
 
 // User-Defined Configuration.h
 #include "Configuration.h"
@@ -56,8 +57,8 @@ int main(int argc, char* argv[]) {
     CPUFrequencyInformation cpoi(cpu_device, "/online");
 
 #ifndef IS_RASPI
-    DeviceInformation thermal_dev_desc(thermal_device, "/type", 6);
-    DeviceInformation thermal_dev(thermal_device, "/temp", 6);
+    CPUThermalInformation thermal_dev_desc(thermal_device, "/type", 6);
+    CPUThermalInformation thermal_dev(thermal_device, "/temp", 6);
 #endif
     int counter;
 
@@ -82,7 +83,7 @@ int main(int argc, char* argv[]) {
 #ifndef IS_RASPI
         // Thermal Information:
         string thermal_information[6];
-        vector<int> tmp_three = thermal_dev.getDevDataArray(counter);
+        vector<int> tmp_three = thermal_dev.getThermalArray(counter);
         thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
