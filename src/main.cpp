@@ -48,10 +48,7 @@ int main(int argc, char* argv[]) {
     cout << "Interval: " << show_interval << endl;
 
     string cpu_device = "/sys/devices/system/cpu/cpu";
-
-#ifndef IS_RASPI
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
-#endif
 
     CPUFrequencyInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
     CPUFrequencyInformation cpoi(cpu_device, "/online");
@@ -59,6 +56,9 @@ int main(int argc, char* argv[]) {
 #ifndef IS_RASPI
     CPUThermalInformation thermal_dev_desc(thermal_device, "/type", 6);
     CPUThermalInformation thermal_dev(thermal_device, "/temp", 6);
+#else
+    CPUThermalInformation thermal_dev_desc(thermal_device, "/type", 1);
+    CPUThermalInformation thermal_dev(thermal_device, "/temp", 1);
 #endif
     int counter;
 
@@ -83,6 +83,9 @@ int main(int argc, char* argv[]) {
 #ifndef IS_RASPI
         // Thermal Information:
         string thermal_information[6];
+#else
+        string thermal_information[2];
+#endif
         vector<int> tmp_three = thermal_dev.getThermalArray(counter);
         thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
         cout << "----------------" << endl;
@@ -90,7 +93,6 @@ int main(int argc, char* argv[]) {
             cout << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
         cout << "----------------" << endl;
-#endif
         sleep(show_interval);
     }
 
