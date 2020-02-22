@@ -1,5 +1,6 @@
 Jetson_Monitoring README
 =========================
+![C/C++ CI](https://github.com/KangDroid/Jetson_Monitoring/workflows/C/C++%20CI/badge.svg)
 
 What is this?
 --------------
