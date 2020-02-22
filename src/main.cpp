@@ -28,22 +28,20 @@ int main(int argc, char* argv[]) {
      * -c : Continously show information(Default interval: 2 seconds)
      * -n : Set show interval
      */
-    string* arguments_list = new string[argc];
+
+    // Default Settings
     int show_interval = 2;
     bool continous_show = false;
 
     // Skip argv[0] because it contains the filename itself.
     for (int i = 1; i < argc; i++) {
-        arguments_list[i] = string(argv[i]);
-
-        if (arguments_list[i] == "-c") {
+        if (!strcmp(argv[i], "-c")) {
             continous_show = true;
         }
 
-        if (arguments_list[i] == "-n") {
+        if (!strcmp(argv[i], "-n")) {
             i++;
-            arguments_list[i] = string(argv[i]);
-            show_interval = atoi(arguments_list[i].c_str());
+            show_interval = atoi(argv[i]);
         }
     }
 
@@ -98,6 +96,4 @@ int main(int argc, char* argv[]) {
         cout << "----------------" << endl;
         sleep(show_interval);
     }
-
-    delete[] arguments_list;
 }
