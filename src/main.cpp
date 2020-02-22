@@ -19,6 +19,9 @@
 
 using namespace std;
 
+// TODO: Clear out Main function, and move those parse-execution to
+//       somewhat class.
+
 int main(int argc, char* argv[]) {
     // Parse arguments
     /**
