@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 #endif
     int counter;
 
-    while (continous_show == true) {
+    while (true) {
         // Online Info
         system("clear && printf '\e[3J'");
         vector<int> tmp_two = cpoi.getCPUFrequencyArray(counter);
@@ -94,6 +94,9 @@ int main(int argc, char* argv[]) {
             cout << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
         cout << "----------------" << endl;
+        if (!continous_show) {
+            break;
+        }
         sleep(show_interval);
     }
 }
