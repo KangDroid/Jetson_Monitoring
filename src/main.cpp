@@ -50,8 +50,10 @@ int main(int argc, char* argv[]) {
     // OFSTREAM
     ofstream file("cpu_log");
 
+#ifdef DEBUG
     cout << "Continous Show: " << continous_show << endl;
     cout << "Interval: " << show_interval << endl;
+#endif
 
     string cpu_device = "/sys/devices/system/cpu/cpu";
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
@@ -77,9 +79,11 @@ int main(int argc, char* argv[]) {
         }
         file.open("cpu_log");
 
+        /**
+         * First line ~ 4th line will be CPU Information
+         */
 #ifndef IS_RASPBIAN
         vector<int> tmp_two = cpoi.getCPUFrequencyArray(counter);
-        file << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
             file << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
         }
@@ -88,11 +92,9 @@ int main(int argc, char* argv[]) {
 
         vector<int> tmp = cpf.getCPUFrequencyArray(counter);
 
-        file << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
-            file << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
+            file << tmp[i] / DIVIDER_FACTOR << endl;
         }
-        file << "----------------" << endl;
 
 #ifndef IS_RASPI
         // Thermal Information:
@@ -102,11 +104,9 @@ int main(int argc, char* argv[]) {
 #endif
         vector<int> tmp_three = thermal_dev.getThermalArray(counter);
         thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
-        file << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
-            file << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
+            file << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
-        file << "----------------" << endl;
         if (!continous_show) {
             break;
         }
