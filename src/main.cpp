@@ -12,6 +12,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+// Proc-Related
+#include "ProcReader.h"
+
 // Core
 #include "CPUFrequencyInformation.h"
 #include "CPUThermalInformation.h"
@@ -55,10 +58,16 @@ int main(int argc, char* argv[]) {
     cout << "Interval: " << show_interval << endl;
 #endif
 
+#ifdef ENABLE_LOAD
+    string load_readfile = "/proc/loadavg";
+    ProcReader prload(load_readfile);
+#endif
+
     string cpu_device = "/sys/devices/system/cpu/cpu";
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
 
     CPUFrequencyInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
+
 #ifndef IS_RASPBIAN
     CPUFrequencyInformation cpoi(cpu_device, "/online");
 #endif
@@ -87,7 +96,6 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < counter; i++) {
             file << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
         }
-        file << "----------------" << endl;
 #endif
 
         vector<int> tmp = cpf.getCPUFrequencyArray(counter);
@@ -107,6 +115,11 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < counter; i++) {
             file << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
+
+#ifdef ENABLE_LOAD
+        file << prload.readProcFile() << endl;
+#endif
+
         if (!continous_show) {
             break;
         }

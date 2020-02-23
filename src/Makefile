@@ -1,7 +1,8 @@
 CXX=g++
 CXXFLAGS= -Wall -O3 -I ../ -I ../include
 TARGET=app.out
-OBJS=CPUThermalInformation.o\
+OBJS= ProcReader.o\
+	CPUThermalInformation.o\
 	CPUFrequencyInformation.o\
 	DeviceInformation.o\
 	main.o
