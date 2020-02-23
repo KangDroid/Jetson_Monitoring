@@ -2,3 +2,4 @@
 #define THERM_DIVIDER_FACTOR 1000.0
 
 #define IS_RASPI
+#define IS_RASPBIAN

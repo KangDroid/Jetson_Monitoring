@@ -52,7 +52,9 @@ int main(int argc, char* argv[]) {
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
 
     CPUFrequencyInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
+#ifndef IS_RASPBIAN
     CPUFrequencyInformation cpoi(cpu_device, "/online");
+#endif
 
 #ifndef IS_RASPI
     CPUThermalInformation thermal_dev_desc(thermal_device, "/type", 6);
@@ -66,12 +68,14 @@ int main(int argc, char* argv[]) {
     while (true) {
         // Online Info
         system("clear && printf '\e[3J'");
+#ifndef IS_RASPBIAN
         vector<int> tmp_two = cpoi.getCPUFrequencyArray(counter);
         cout << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
             cout << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
         }
         cout << "----------------" << endl;
+#endif
 
         vector<int> tmp = cpf.getCPUFrequencyArray(counter);
 
