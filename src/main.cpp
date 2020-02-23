@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <fstream>
+
 #include <unistd.h>
 #include <algorithm>
 #include <sys/types.h>
@@ -45,6 +47,9 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    // OFSTREAM
+    ofstream file("cpu_log");
+
     cout << "Continous Show: " << continous_show << endl;
     cout << "Interval: " << show_interval << endl;
 
@@ -65,25 +70,29 @@ int main(int argc, char* argv[]) {
 #endif
     int counter;
 
+    // File Streaming
     while (true) {
-        // Online Info
-        system("clear && printf '\e[3J'");
+        if (file.is_open()) {
+            file.close();
+        }
+        file.open("cpu_log");
+
 #ifndef IS_RASPBIAN
         vector<int> tmp_two = cpoi.getCPUFrequencyArray(counter);
-        cout << "----------------" << endl;
+        file << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
-            cout << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
+            file << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
         }
-        cout << "----------------" << endl;
+        file << "----------------" << endl;
 #endif
 
         vector<int> tmp = cpf.getCPUFrequencyArray(counter);
 
-        cout << "----------------" << endl;
+        file << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
-            cout << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
+            file << "CPU " << i + 1 << ": " << tmp[i] / DIVIDER_FACTOR << "Ghz" << endl;
         }
-        cout << "----------------" << endl;
+        file << "----------------" << endl;
 
 #ifndef IS_RASPI
         // Thermal Information:
@@ -93,11 +102,11 @@ int main(int argc, char* argv[]) {
 #endif
         vector<int> tmp_three = thermal_dev.getThermalArray(counter);
         thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
-        cout << "----------------" << endl;
+        file << "----------------" << endl;
         for (int i = 0; i < counter; i++) {
-            cout << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
+            file << thermal_information[i] << ": " << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
-        cout << "----------------" << endl;
+        file << "----------------" << endl;
         if (!continous_show) {
             break;
         }
