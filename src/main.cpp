@@ -32,11 +32,13 @@ int main(int argc, char* argv[]) {
     /**
      * -c : Continously show information(Default interval: 2 seconds)
      * -n : Set show interval
+     * -s : Streaming Directory
      */
 
     // Default Settings
     int show_interval = 2;
     bool continous_show = false;
+    string streaming_dir = "/var/www/html/cpu_log";
 
     // Skip argv[0] because it contains the filename itself.
     for (int i = 1; i < argc; i++) {
@@ -48,10 +50,15 @@ int main(int argc, char* argv[]) {
             i++;
             show_interval = atoi(argv[i]);
         }
+
+        if (!strcmp(argv[i], "-s")) {
+            i++;
+            streaming_dir = string(argv[i]);
+        }
     }
 
     // OFSTREAM
-    ofstream file("cpu_log");
+    ofstream file(streaming_dir);
 
 #ifdef DEBUG
     cout << "Continous Show: " << continous_show << endl;
@@ -86,7 +93,7 @@ int main(int argc, char* argv[]) {
         if (file.is_open()) {
             file.close();
         }
-        file.open("cpu_log");
+        file.open(streaming_dir);
 
         /**
          * First line ~ 4th line will be CPU Information
