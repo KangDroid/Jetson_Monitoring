@@ -19,6 +19,9 @@
 #include "CPUFrequencyInformation.h"
 #include "CPUThermalInformation.h"
 
+// Disk Usage
+#include "DiskUsage.h"
+
 // User-Defined Configuration.h
 #include "Configuration.h"
 
@@ -59,6 +62,9 @@ int main(int argc, char* argv[]) {
 
     // OFSTREAM
     ofstream file(streaming_dir);
+
+    // Disk Usage
+    DiskUsage disk_usage;
 
 #ifdef DEBUG
     cout << "Continous Show: " << continous_show << endl;
@@ -124,8 +130,11 @@ int main(int argc, char* argv[]) {
         }
 
 #ifdef ENABLE_LOAD
-        file << prload.readProcFile() << endl;
+        file << prload.readProcFile();
 #endif
+        // Disk Usage Information
+        long long* diskData = disk_usage.getData();
+        file << diskData[2] << endl;
 
         if (!continous_show) {
             break;
