@@ -22,6 +22,9 @@
 // Disk Usage
 #include "DiskUsage.h"
 
+// Uptime
+#include "SysInfoReader.h"
+
 // User-Defined Configuration.h
 #include "Configuration.h"
 
@@ -92,6 +95,8 @@ int main(int argc, char* argv[]) {
     CPUThermalInformation thermal_dev_desc(thermal_device, "/type", 1);
     CPUThermalInformation thermal_dev(thermal_device, "/temp", 1);
 #endif
+
+    SysInfoReader sir;
     int counter;
 
     // File Streaming
@@ -135,6 +140,8 @@ int main(int argc, char* argv[]) {
         // Disk Usage Information
         long long* diskData = disk_usage.getData();
         file << diskData[2] << endl;
+
+        file << sir.getUptime() << endl;
 
         if (!continous_show) {
             break;
