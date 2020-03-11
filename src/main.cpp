@@ -13,7 +13,7 @@
 #include <fcntl.h>
 
 // Proc-Related
-#include "ProcReader.h"
+#include "LoadManager.h"
 
 // Core
 #include "CPUFrequencyInformation.h"
@@ -75,8 +75,7 @@ int main(int argc, char* argv[]) {
 #endif
 
 #ifdef ENABLE_LOAD
-    string load_readfile = "/proc/loadavg";
-    ProcReader prload(load_readfile);
+    LoadManager lm;
 #endif
 
     string cpu_device = "/sys/devices/system/cpu/cpu";
@@ -135,7 +134,7 @@ int main(int argc, char* argv[]) {
         }
 
 #ifdef ENABLE_LOAD
-        file << prload.readProcFile();
+        file << lm.calculatePercentage() << endl;
 #endif
         // Disk Usage Information
         long long* diskData = disk_usage.getData();
