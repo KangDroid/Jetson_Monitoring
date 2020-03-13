@@ -81,16 +81,24 @@ int main(int argc, char* argv[]) {
     string cpu_device = "/sys/devices/system/cpu/cpu";
     string thermal_device = "/sys/devices/virtual/thermal/thermal_zone";
 
-    CPUFrequencyInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
+#ifdef IS_DTOP
+    CPUFrequencyInformation cpf(cpu_device, "/cpufreq/scaling_cur_freq", 12);
+#endif
 
-#ifndef IS_RASPBIAN
+#ifdef IS_RASPBIAN
+    CPUFrequencyInformation cpf(cpu_device, "/cpufreq/cpuinfo_cur_freq");
+#endif
+
+#ifdef IS_JETSON
     CPUFrequencyInformation cpoi(cpu_device, "/online");
 #endif
 
-#ifndef IS_RASPI
+#ifdef IS_JETSON
     CPUThermalInformation thermal_dev_desc(thermal_device, "/type", 6);
     CPUThermalInformation thermal_dev(thermal_device, "/temp", 6);
-#else
+#endif
+
+#if defined(IS_DTOP) || defined(IS_RASPI)
     CPUThermalInformation thermal_dev_desc(thermal_device, "/type", 1);
     CPUThermalInformation thermal_dev(thermal_device, "/temp", 1);
 #endif
@@ -108,7 +116,7 @@ int main(int argc, char* argv[]) {
         /**
          * First line ~ 4th line will be CPU Information
          */
-#ifndef IS_RASPBIAN
+#ifdef IS_JETSON
         vector<int> tmp_two = cpoi.getCPUFrequencyArray(counter);
         for (int i = 0; i < counter; i++) {
             file << "CPU " << i + 1 << ": " << ((tmp_two[i]) ? "ON" : "OFF") << endl;
@@ -125,10 +133,12 @@ int main(int argc, char* argv[]) {
             }
         }
 
-#ifndef IS_RASPI
+#ifdef IS_JETSON
         // Thermal Information:
         string thermal_information[6];
-#else
+#endif
+
+#if defined(IS_RASPI) || defined(IS_DTOP)
         string thermal_information[2];
 #endif
         vector<int> tmp_three = thermal_dev.getThermalArray(counter);
