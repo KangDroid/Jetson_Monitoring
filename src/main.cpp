@@ -118,7 +118,11 @@ int main(int argc, char* argv[]) {
         vector<int> tmp = cpf.getCPUFrequencyArray(counter);
 
         for (int i = 0; i < counter; i++) {
-            file << tmp[i] / DIVIDER_FACTOR << endl;
+            if (i == counter - 1) {
+                file << tmp[i] / DIVIDER_FACTOR << endl;
+            } else {
+                file << tmp[i] / DIVIDER_FACTOR << " ";
+            }
         }
 
 #ifndef IS_RASPI
