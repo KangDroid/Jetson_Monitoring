@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     }
 
     // OFSTREAM
-    //ofstream file(streaming_dir);
+    ofstream file(streaming_dir);
 
     // Disk Usage
     DiskUsage disk_usage;
@@ -108,11 +108,7 @@ int main(int argc, char* argv[]) {
 
     // File Streaming
     while (true) {
-        if (file.is_open()) {
-            file.close();
-        }
-        file.open(streaming_dir);
-
+        string output_str = "";
         /**
          * First line ~ 4th line will be CPU Information
          */
@@ -127,9 +123,9 @@ int main(int argc, char* argv[]) {
 
         for (int i = 0; i < counter; i++) {
             if (i == counter - 1) {
-                file << tmp[i] / DIVIDER_FACTOR << endl;
+                output_str.append(to_string(tmp[i] / DIVIDER_FACTOR) + "\n");
             } else {
-                file << tmp[i] / DIVIDER_FACTOR << " ";
+                output_str.append(to_string(tmp[i] / DIVIDER_FACTOR) + " ");
             }
         }
 
@@ -144,17 +140,24 @@ int main(int argc, char* argv[]) {
         vector<int> tmp_three = thermal_dev.getThermalArray(counter);
         //thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
         for (int i = 0; i < counter; i++) {
-            file << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
+            output_str.append(to_string(tmp_three[i]/THERM_DIVIDER_FACTOR) + "\n");
         }
 
 #ifdef ENABLE_LOAD
-        file << lm.calculatePercentage() << endl;
+        output_str.append(to_string(lm.calculatePercentage()) + "\n");
 #endif
         // Disk Usage Information
         long long* diskData = disk_usage.getData();
-        file << diskData[2] << endl;
+        output_str.append(to_string(diskData[2]) + "\n");
 
-        file << sir.getUptime() << endl;
+        output_str.append(to_string(sir.getUptime()) + "\n");
+
+        file.open(streaming_dir);
+        cout << "Start" << endl;
+        // Write to file
+        file << output_str;
+        file.close();
+        cout << "end" << endl;
 
         if (!continous_show) {
             break;
