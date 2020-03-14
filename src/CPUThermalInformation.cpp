@@ -24,11 +24,11 @@ string CPUThermalInformation::getThermalDescriptor(int& fd) {
 vector<int>& CPUThermalInformation::getThermalArray(int& counter) {
     counter = device_count; // Super class Derivation.
     device_returned_val.clear();
-    DeviceInformation::registerDev(); // Calling super class from child.
+    registerDev(); // Calling super class from child.
     for (int i = 0; i < device_count; i++) {
         device_returned_val.push_back(getEachDevData(device_info_fd[i]));
     }
-    DeviceInformation::closeFree(); // Calling super class from child.
+    closeFree(); // Calling super class from child.
     return device_returned_val;
 }
 
