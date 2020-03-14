@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     }
 
     // OFSTREAM
-    ofstream file(streaming_dir);
+    //ofstream file(streaming_dir);
 
     // Disk Usage
     DiskUsage disk_usage;
@@ -108,10 +108,11 @@ int main(int argc, char* argv[]) {
 
     // File Streaming
     while (true) {
-        if (file.is_open()) {
+        cout << "Working" << "\n";
+        /*if (file.is_open()) {
             file.close();
-        }
-        file.open(streaming_dir);
+        }*/
+        //file.open(streaming_dir);
 
         /**
          * First line ~ 4th line will be CPU Information
@@ -127,9 +128,9 @@ int main(int argc, char* argv[]) {
 
         for (int i = 0; i < counter; i++) {
             if (i == counter - 1) {
-                file << tmp[i] / DIVIDER_FACTOR << endl;
+                cout << tmp[i] / DIVIDER_FACTOR << endl;
             } else {
-                file << tmp[i] / DIVIDER_FACTOR << " ";
+                cout << tmp[i] / DIVIDER_FACTOR << " ";
             }
         }
 
@@ -142,19 +143,19 @@ int main(int argc, char* argv[]) {
         string thermal_information[2];
 #endif
         vector<int> tmp_three = thermal_dev.getThermalArray(counter);
-        thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
+        //thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
         for (int i = 0; i < counter; i++) {
-            file << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
+            cout << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
 
 #ifdef ENABLE_LOAD
-        file << lm.calculatePercentage() << endl;
+        cout << lm.calculatePercentage() << endl;
 #endif
         // Disk Usage Information
         long long* diskData = disk_usage.getData();
-        file << diskData[2] << endl;
+        cout << diskData[2] << endl;
 
-        file << sir.getUptime() << endl;
+        cout << sir.getUptime() << endl;
 
         if (!continous_show) {
             break;

@@ -9,9 +9,7 @@
 #include <vector>
 #include <unistd.h>
 #include <algorithm>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <fstream>
 
 using namespace std;
 
@@ -20,7 +18,7 @@ protected:
     string base_data;
     string final_data;
     int device_count;
-    vector<int> device_info_fd;
+    vector<ifstream*> file_store;
     vector<int> device_returned_val;
     void registerDev();
     void closeFree();
