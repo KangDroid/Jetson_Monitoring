@@ -108,11 +108,10 @@ int main(int argc, char* argv[]) {
 
     // File Streaming
     while (true) {
-        cout << "Working" << "\n";
-        /*if (file.is_open()) {
+        if (file.is_open()) {
             file.close();
-        }*/
-        //file.open(streaming_dir);
+        }
+        file.open(streaming_dir);
 
         /**
          * First line ~ 4th line will be CPU Information
@@ -128,9 +127,9 @@ int main(int argc, char* argv[]) {
 
         for (int i = 0; i < counter; i++) {
             if (i == counter - 1) {
-                cout << tmp[i] / DIVIDER_FACTOR << endl;
+                file << tmp[i] / DIVIDER_FACTOR << endl;
             } else {
-                cout << tmp[i] / DIVIDER_FACTOR << " ";
+                file << tmp[i] / DIVIDER_FACTOR << " ";
             }
         }
 
@@ -145,17 +144,17 @@ int main(int argc, char* argv[]) {
         vector<int> tmp_three = thermal_dev.getThermalArray(counter);
         //thermal_dev_desc.getThermalDescriptor(thermal_information, counter);
         for (int i = 0; i < counter; i++) {
-            cout << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
+            file << tmp_three[i]/THERM_DIVIDER_FACTOR << endl;
         }
 
 #ifdef ENABLE_LOAD
-        cout << lm.calculatePercentage() << endl;
+        file << lm.calculatePercentage() << endl;
 #endif
         // Disk Usage Information
         long long* diskData = disk_usage.getData();
-        cout << diskData[2] << endl;
+        file << diskData[2] << endl;
 
-        cout << sir.getUptime() << endl;
+        file << sir.getUptime() << endl;
 
         if (!continous_show) {
             break;
