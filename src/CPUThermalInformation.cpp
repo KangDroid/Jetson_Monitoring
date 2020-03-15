@@ -33,7 +33,7 @@ vector<int>& CPUThermalInformation::getThermalArray(int& counter) {
 }
 
 int CPUThermalInformation::getEachDevData(ifstream* fd) {
-    int tmp;
+    int tmp = 0;
     char test[20] = {0,};
     if (fd->is_open()) {
         fd->read(test, 19);
