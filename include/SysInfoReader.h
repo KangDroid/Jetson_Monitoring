@@ -13,4 +13,5 @@ private:
     int errorCode;
 public:
     long getUptime();
+    double getFreeRamPercentage();
 };

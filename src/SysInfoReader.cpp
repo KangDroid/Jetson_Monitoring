@@ -8,3 +8,14 @@ long SysInfoReader::getUptime() {
         return systemInfo.uptime;
     }
 }
+
+double SysInfoReader::getFreeRamPercentage() {
+    errorCode = sysinfo(&systemInfo);
+    if (errorCode != 0) {
+        return 0;
+    } else {
+        unsigned long freeram = systemInfo.freeram;
+        unsigned long totalram = systemInfo.totalram;
+        return (((double)freeram/totalram) * 100);
+    }
+}

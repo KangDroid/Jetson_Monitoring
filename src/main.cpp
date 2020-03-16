@@ -138,6 +138,10 @@ int main(int argc, char* argv[]) {
 
         output_str.append(to_string(sir.getUptime()) + "\n");
 
+        // Free Ram Percentage
+        double freeRamPctg = sir.getFreeRamPercentage();
+        output_str.append(to_string(freeRamPctg) + "\n");
+
         file.open(streaming_dir);
         cout << "Start" << endl;
         // Write to file
